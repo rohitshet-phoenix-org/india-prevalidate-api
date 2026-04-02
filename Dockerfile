@@ -10,14 +10,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Build SQLite database from public-domain IFSC + PIN code datasets
-# (~60s download + build, cached in Docker layer)
 RUN python scripts/build_db.py
 
-# Railway injects $PORT at runtime — do not hardcode
-EXPOSE ${PORT:-8000}
+# Railway injects $PORT at runtime
+EXPOSE 8000
 
-# Run with gunicorn + uvicorn workers
-# - 1 worker to stay within Railway free-tier memory (512 MB)
-# - log-level info so Railway deploy logs show startup/binding
-# - access-logfile /dev/null: DPDP Act compliance (no request logging)
-CMD ["sh", "-c", "exec gunicorn app.main:app -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:${PORT:-8000} --timeout 120 --access-logfile /dev/null --log-level info"]
+# Use uvicorn directly — simpler, lighter, reliable $PORT expansion
+# DPDP Act compliance: --no-access-log suppresses request logging
+CMD python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --no-access-log
