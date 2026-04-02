@@ -6,12 +6,15 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application
-COPY . .
+# Copy application code and data
+COPY app/ ./app/
+COPY static/ ./static/
+COPY scripts/ ./scripts/
+COPY data/ ./data/
 
-# Build SQLite database from public-domain IFSC + PIN code datasets
+# Build SQLite database from public-domain datasets
 RUN python scripts/build_db.py
 
-# Railway sets PORT dynamically (usually 8080) — app reads it at runtime
-# DPDP Act compliance: --no-access-log suppresses request logging
-CMD exec python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --no-access-log
+# Railway sets PORT dynamically (typically 8080)
+# Diagnostic echo kept until deploy is confirmed working
+CMD echo "PORT=${PORT:-not_set}" && echo "Health endpoint: /v1/health" && exec python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}

@@ -54,8 +54,9 @@ from pathlib import Path
 # which is safe because all identifiers travel in POST bodies, not URLs.
 # We explicitly suppress any deeper logging that frameworks or libraries
 # might enable by default. No input identifiers must ever reach disk/stdout.
+# Suppress access logs (DPDP compliance — no request metadata on disk/stdout)
+# but allow error/startup logs so deployment platforms can see boot status.
 logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
-logging.getLogger("uvicorn.error").setLevel(logging.WARNING)
 logging.getLogger("fastapi").setLevel(logging.WARNING)
 
 # ─── App Setup ────────────────────────────────────────────────────────────────
