@@ -9,11 +9,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application
 COPY . .
 
-# Expose port
+# Build SQLite database from public-domain IFSC + PIN code datasets
+# (~60s download + build, cached in Docker layer)
+RUN python scripts/build_db.py
+
+# Expose port (Railway injects $PORT at runtime)
 EXPOSE 8000
 
 # Run with gunicorn + uvicorn workers for production
 # DPDP Act compliance: --access-logfile /dev/null suppresses access logs
 # that could capture request metadata. Error logs go to stderr only for
 # critical server errors (no request body data is included).
-CMD ["gunicorn", "app.main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "--timeout", "120", "--access-logfile", "/dev/null", "--log-level", "warning"]
+CMD gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:${PORT:-8000} --timeout 120 --access-logfile /dev/null --log-level warning
