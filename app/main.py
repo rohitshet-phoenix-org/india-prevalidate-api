@@ -35,7 +35,8 @@ LEGAL SCOPE — What this API does NOT do:
 
 from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import Optional
 import re
@@ -45,6 +46,7 @@ import os
 import logging
 from datetime import datetime, timezone
 from functools import lru_cache
+from pathlib import Path
 
 # ─── DPDP Act Compliance: Suppress ALL request body logging ─────────────────
 # Uvicorn's default access logger only logs method, path, and status code —
@@ -86,7 +88,7 @@ app = FastAPI(
         "format specifications."
     ),
     version="2.0.0",
-    docs_url="/docs",
+    docs_url=None,
     redoc_url="/redoc",
 )
 
@@ -96,6 +98,32 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ─── Static Files & Custom UI ───────────────────────────────────────────────
+
+_APP_DIR = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_ROOT = os.path.dirname(_APP_DIR)
+STATIC_DIR = os.path.join(_PROJECT_ROOT, "static")
+
+
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+async def landing_page():
+    """Serve the landing page at root."""
+    html_path = os.path.join(STATIC_DIR, "landing.html")
+    with open(html_path, "r", encoding="utf-8") as f:
+        return HTMLResponse(content=f.read())
+
+
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui():
+    """Custom-themed Swagger UI with branded CSS."""
+    from fastapi.openapi.docs import get_swagger_ui_html
+    return get_swagger_ui_html(
+        openapi_url=app.openapi_url,
+        title=app.title + " — API Documentation",
+        swagger_favicon_url="/static/img/favicon.svg",
+        swagger_css_url="/static/css/swagger-custom.css",
+    )
 
 # ─── Aggregate Stats Only (no per-user tracking, no input logging) ──────────
 # DPDP Act compliance: We track only aggregate counts. No user identifiers,
@@ -1487,3 +1515,9 @@ async def global_exception_handler(request: Request, exc: Exception):
             "timestamp": datetime.now(timezone.utc).isoformat(),
         },
     )
+
+
+# ─── Static File Mount (MUST be last — acts as catch-all) ──────────────────
+# Placed after all route definitions so it doesn't shadow API endpoints.
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>India PreValidate API — Offline Format Validation for Indian Business Identifiers</title>
+<meta name="description" content="Pre-validate GSTIN, PAN, UPI, IFSC, CIN, TAN and 9 more Indian identifier formats offline. No government database access. DPDP Act compliant."/>
+<link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-primary: #050816;
+  --bg-secondary: #0a0f24;
+  --bg-card: rgba(15, 23, 42, 0.6);
+  --bg-card-hover: rgba(99, 102, 241, 0.08);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent: #6366f1;
+  --accent-light: #818cf8;
+  --accent-glow: rgba(99, 102, 241, 0.25);
+  --emerald: #10b981;
+  --emerald-glow: rgba(16, 185, 129, 0.2);
+  --amber: #f59e0b;
+  --border: rgba(99, 102, 241, 0.12);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent-light); text-decoration: none; transition: color 0.2s; }
+a:hover { color: #a5b4fc; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMATED BACKGROUND
+   ═══════════════════════════════════════════════════════════════════════════ */
+.bg-grid {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.orb {
+  position: fixed; border-radius: 50%; filter: blur(100px);
+  pointer-events: none; z-index: 0;
+}
+.orb-1 {
+  width: 600px; height: 600px; top: -200px; right: -200px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15), transparent 70%);
+  animation: float-1 20s ease-in-out infinite;
+}
+.orb-2 {
+  width: 500px; height: 500px; bottom: -150px; left: -150px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.12), transparent 70%);
+  animation: float-2 25s ease-in-out infinite;
+}
+.orb-3 {
+  width: 400px; height: 400px; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.08), transparent 70%);
+  animation: float-3 18s ease-in-out infinite;
+}
+
+@keyframes float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-60px, 40px) scale(1.1); }
+  66% { transform: translate(30px, -50px) scale(0.95); }
+}
+@keyframes float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(50px, -30px) scale(1.05); }
+  66% { transform: translate(-40px, 60px) scale(0.9); }
+}
+@keyframes float-3 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-45%, -55%) scale(1.15); }
+}
+
+section { position: relative; z-index: 1; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(5, 8, 22, 0.8);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s;
+}
+nav.scrolled { background: rgba(5, 8, 22, 0.95); box-shadow: 0 4px 30px rgba(0,0,0,0.3); }
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; height: 64px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 17px; color: var(--text-primary);
+}
+.nav-logo img { width: 28px; height: 28px; }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a {
+  font-size: 14px; font-weight: 500; color: var(--text-secondary);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text-primary); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px;
+  padding: 10px 22px; border-radius: var(--radius-sm);
+  border: none; cursor: pointer; transition: all 0.3s ease;
+  text-decoration: none;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff; box-shadow: 0 4px 20px var(--accent-glow);
+}
+.btn-primary:hover {
+  transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow);
+  color: #fff;
+}
+.btn-ghost {
+  background: transparent; color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  border-color: var(--accent); color: var(--accent-light);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════════════════════ */
+.hero {
+  padding: 160px 0 100px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 100px; padding: 6px 16px 6px 8px;
+  font-size: 13px; color: var(--accent-light); font-weight: 500;
+  margin-bottom: 28px;
+  animation: fadeUp 0.6s ease-out;
+}
+.hero-badge .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--emerald);
+  box-shadow: 0 0 8px var(--emerald-glow);
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.3); }
+}
+.hero h1 {
+  font-size: clamp(40px, 6vw, 72px); font-weight: 800;
+  line-height: 1.05; letter-spacing: -2px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.6s ease-out 0.1s both;
+}
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 40%, #c084fc 70%, #818cf8 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+.hero-sub {
+  font-size: 18px; line-height: 1.7; color: var(--text-secondary);
+  max-width: 640px; margin: 0 auto 40px;
+  animation: fadeUp 0.6s ease-out 0.2s both;
+}
+.hero-actions {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.6s ease-out 0.3s both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Hero Code Preview ───────────────────────────────────────────────────── */
+.hero-code {
+  max-width: 700px; margin: 60px auto 0;
+  background: #0a0f24;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px var(--accent-glow);
+  animation: fadeUp 0.6s ease-out 0.4s both;
+}
+.code-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  background: rgba(99, 102, 241, 0.05);
+  border-bottom: 1px solid var(--border);
+}
+.code-dot { width: 10px; height: 10px; border-radius: 50%; }
+.code-dot:nth-child(1) { background: #ef4444; }
+.code-dot:nth-child(2) { background: #f59e0b; }
+.code-dot:nth-child(3) { background: #10b981; }
+.code-header span {
+  margin-left: auto; font-size: 12px; color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.code-body {
+  padding: 20px; font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; line-height: 1.7; overflow-x: auto;
+}
+.code-body .c-keyword { color: #c084fc; }
+.code-body .c-method { color: #818cf8; }
+.code-body .c-url { color: #34d399; }
+.code-body .c-key { color: #93c5fd; }
+.code-body .c-value { color: #fbbf24; }
+.code-body .c-bool { color: #f472b6; }
+.code-body .c-comment { color: #475569; }
+.code-body .c-string { color: #34d399; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STATS BAR
+   ═══════════════════════════════════════════════════════════════════════════ */
+.stats-bar {
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: rgba(10, 15, 36, 0.6);
+}
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  text-align: center;
+}
+.stat-item h3 {
+  font-size: 36px; font-weight: 800; letter-spacing: -1px;
+  background: linear-gradient(135deg, var(--accent-light), #a78bfa);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.stat-item p { font-size: 13px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ENDPOINTS SECTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+.endpoints { padding: 100px 0; }
+.section-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--accent-light);
+  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(30px, 4vw, 44px); font-weight: 800;
+  letter-spacing: -1px; margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 17px; color: var(--text-secondary);
+  max-width: 560px; margin-bottom: 50px;
+}
+
+.endpoint-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+.endpoint-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px;
+  transition: all 0.3s ease; cursor: default;
+  position: relative; overflow: hidden;
+}
+.endpoint-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.endpoint-card:hover {
+  border-color: rgba(99, 102, 241, 0.25);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.08);
+}
+.endpoint-card:hover::before { opacity: 1; }
+
+.endpoint-method {
+  display: inline-block; font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700; padding: 3px 8px;
+  border-radius: 4px; margin-bottom: 12px;
+}
+.method-post { background: rgba(99, 102, 241, 0.15); color: var(--accent-light); }
+.method-get { background: var(--emerald-glow); color: var(--emerald); }
+
+.endpoint-path {
+  font-family: 'JetBrains Mono', monospace; font-size: 14px;
+  font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
+}
+.endpoint-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LIVE DEMO SECTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+.demo { padding: 100px 0; }
+.demo-container {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
+}
+.demo-panel {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.demo-panel-header {
+  padding: 16px 20px; background: rgba(99, 102, 241, 0.05);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.demo-panel-header h4 {
+  font-size: 14px; font-weight: 600; color: var(--text-primary);
+}
+.demo-tabs { display: flex; gap: 4px; }
+.demo-tab {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  padding: 4px 12px; border-radius: 6px; cursor: pointer;
+  color: var(--text-muted); background: transparent; border: none;
+  transition: all 0.2s;
+}
+.demo-tab.active { background: rgba(99, 102, 241, 0.15); color: var(--accent-light); }
+.demo-tab:hover { color: var(--accent-light); }
+
+.demo-body { padding: 20px; }
+.demo-input-group { margin-bottom: 14px; }
+.demo-input-group label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 6px;
+}
+.demo-input {
+  width: 100%; padding: 10px 14px;
+  font-family: 'JetBrains Mono', monospace; font-size: 14px;
+  background: #0c0f1a; color: var(--text-primary);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  outline: none; transition: all 0.2s;
+}
+.demo-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.demo-input::placeholder { color: var(--text-muted); }
+
+.btn-try {
+  width: 100%; padding: 12px; margin-top: 6px;
+  font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff;
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  transition: all 0.3s; box-shadow: 0 4px 20px var(--accent-glow);
+}
+.btn-try:hover { transform: translateY(-1px); box-shadow: 0 6px 25px var(--accent-glow); }
+.btn-try:active { transform: translateY(0); }
+.btn-try:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.demo-response {
+  padding: 20px; font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; line-height: 1.7; color: #c7d2fe;
+  min-height: 280px; white-space: pre-wrap; word-break: break-word;
+  overflow-y: auto; max-height: 400px;
+}
+.demo-response .placeholder { color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 14px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HOW IT WORKS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.how-it-works { padding: 100px 0; }
+.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 50px; }
+.step-card {
+  text-align: center; padding: 40px 28px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); transition: all 0.3s;
+}
+.step-card:hover {
+  border-color: rgba(99, 102, 241, 0.25); transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.08);
+}
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; border-radius: 14px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+  font-size: 20px; font-weight: 800; color: var(--accent-light);
+  margin-bottom: 20px;
+}
+.step-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+.step-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PRICING
+   ═══════════════════════════════════════════════════════════════════════════ */
+.pricing { padding: 100px 0; }
+.pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.price-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px 24px;
+  transition: all 0.3s; position: relative;
+}
+.price-card:hover {
+  border-color: rgba(99, 102, 241, 0.3); transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.08);
+}
+.price-card.featured {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(5, 8, 22, 0.9));
+  box-shadow: 0 8px 40px var(--accent-glow);
+}
+.price-card.featured::before {
+  content: 'POPULAR'; position: absolute; top: -10px; right: 20px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff;
+  font-size: 10px; font-weight: 800; letter-spacing: 1px;
+  padding: 4px 10px; border-radius: 6px;
+}
+.price-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.price-card .price {
+  font-size: 36px; font-weight: 800; letter-spacing: -1px; margin: 16px 0 4px;
+}
+.price-card .price span { font-size: 14px; font-weight: 500; color: var(--text-muted); }
+.price-card .quota { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+.price-card ul { list-style: none; margin-bottom: 24px; }
+.price-card li {
+  font-size: 13px; color: var(--text-secondary); padding: 6px 0;
+  display: flex; align-items: center; gap: 8px;
+}
+.price-card li::before {
+  content: ''; width: 16px; height: 16px; flex-shrink: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5 8l2 2 4-4' stroke='%2310b981' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.price-btn {
+  display: block; width: 100%; padding: 10px;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+  border-radius: var(--radius-sm); cursor: pointer; text-align: center;
+  transition: all 0.3s; text-decoration: none;
+}
+.price-btn-outline {
+  background: transparent; color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.price-btn-outline:hover { border-color: var(--accent); color: var(--accent-light); }
+.price-btn-filled {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff;
+  border: none; box-shadow: 0 4px 15px var(--accent-glow);
+}
+.price-btn-filled:hover { box-shadow: 0 6px 25px var(--accent-glow); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════════════════ */
+footer {
+  padding: 60px 0 30px;
+  border-top: 1px solid var(--border);
+  background: rgba(5, 8, 22, 0.8);
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+  margin-bottom: 40px;
+}
+.footer-brand p { font-size: 14px; color: var(--text-muted); margin-top: 12px; line-height: 1.6; }
+.footer-col h5 {
+  font-size: 13px; font-weight: 700; color: var(--text-primary);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;
+}
+.footer-col a {
+  display: block; font-size: 14px; color: var(--text-muted);
+  padding: 4px 0; transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--text-primary); }
+.footer-bottom {
+  text-align: center; padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .endpoint-grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero h1 { font-size: 36px; letter-spacing: -1px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .endpoint-grid { grid-template-columns: 1fr; }
+  .demo-container { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ═══════════════════ NAVIGATION ═══════════════════ -->
+<nav id="nav">
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <img src="/static/img/favicon.svg" alt=""/>
+      India PreValidate
+    </div>
+    <div class="nav-links">
+      <a href="#endpoints">Endpoints</a>
+      <a href="#demo">Live Demo</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/docs" class="btn btn-ghost">API Docs</a>
+      <a href="/docs#/default" class="btn btn-primary">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      v2.0 &mdash; 15 Endpoints Live
+    </div>
+    <h1>
+      Validate Indian Identifiers<br/>
+      <span class="gradient-text">Before They Cost You Money</span>
+    </h1>
+    <p class="hero-sub">
+      Offline format validation for GSTIN, PAN, UPI, IFSC, CIN, and 10 more
+      Indian business identifiers. Catch malformed inputs before they hit
+      your paid verification pipeline.
+    </p>
+    <div class="hero-actions">
+      <a href="/docs" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Explore API Docs
+      </a>
+      <a href="#demo" class="btn btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polygon points="5,3 13,8 5,13" fill="currentColor"/></svg>
+        Try Live Demo
+      </a>
+    </div>
+
+    <!-- Hero code preview -->
+    <div class="hero-code">
+      <div class="code-header">
+        <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+        <span>Response &mdash; /v1/gst/validate</span>
+      </div>
+      <div class="code-body">
+<span class="c-comment">// Offline format check &mdash; no government database access</span>
+{
+  <span class="c-key">"valid"</span>: <span class="c-bool">true</span>,
+  <span class="c-key">"details"</span>: {
+    <span class="c-key">"format_valid"</span>: <span class="c-bool">true</span>,
+    <span class="c-key">"checksum_valid"</span>: <span class="c-bool">true</span>,
+    <span class="c-key">"state_name"</span>: <span class="c-string">"Maharashtra"</span>,
+    <span class="c-key">"entity_type"</span>: <span class="c-string">"Firm / LLP"</span>,
+    <span class="c-key">"validation_type"</span>: <span class="c-string">"offline_format_check"</span>
+  }
+}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ STATS BAR ═══════════════════ -->
+<section class="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item"><h3>15</h3><p>Validation Endpoints</p></div>
+      <div class="stat-item"><h3>&lt;50ms</h3><p>Response Time</p></div>
+      <div class="stat-item"><h3>0</h3><p>Data Stored</p></div>
+      <div class="stat-item"><h3>79</h3><p>Tests Passing</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ENDPOINTS ═══════════════════ -->
+<section class="endpoints" id="endpoints">
+  <div class="container">
+    <div class="section-label">Endpoints</div>
+    <h2 class="section-title">One API, Every Indian Identifier</h2>
+    <p class="section-sub">
+      Algorithmic format checks using publicly documented rules.
+      No government database access. No data stored.
+    </p>
+    <div class="endpoint-grid">
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/gst/validate</div>
+        <div class="endpoint-desc">GSTIN format, Luhn mod-36 checksum, state code, entity type extraction</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/pan/validate</div>
+        <div class="endpoint-desc">PAN format, entity type classification, name initial extraction</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/upi/validate</div>
+        <div class="endpoint-desc">UPI ID format parsing, 35+ provider handles, bank/app identification</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/ifsc/lookup</div>
+        <div class="endpoint-desc">IFSC to bank, branch, city, MICR from public-domain RBI data</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/cin/validate</div>
+        <div class="endpoint-desc">CIN format, listing status, industry code, company type, state</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/tan/validate</div>
+        <div class="endpoint-desc">TAN format, area code extraction, serial number parsing</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/fssai/format</div>
+        <div class="endpoint-desc">FSSAI 14-digit license format, license type and state identification</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/msme/format</div>
+        <div class="endpoint-desc">Udyam registration number format, state and district parsing</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/vehicle/format</div>
+        <div class="endpoint-desc">Vehicle registration format, state code, RTO office identification</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/pincode/lookup</div>
+        <div class="endpoint-desc">PIN code to city, state, district from India Post open data</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/gst/bulk-validate</div>
+        <div class="endpoint-desc">Batch validate up to 50 GSTINs in a single request</div>
+      </div>
+      <div class="endpoint-card">
+        <span class="endpoint-method method-post">POST</span>
+        <div class="endpoint-path">/v1/pan/bulk-validate</div>
+        <div class="endpoint-desc">Batch validate up to 50 PANs in a single request</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ LIVE DEMO ═══════════════════ -->
+<section class="demo" id="demo">
+  <div class="container">
+    <div class="section-label">Live Demo</div>
+    <h2 class="section-title">Try It Right Now</h2>
+    <p class="section-sub">Send a real request. See the response. Zero setup required.</p>
+    <div class="demo-container">
+      <div class="demo-panel">
+        <div class="demo-panel-header">
+          <h4>Request</h4>
+          <div class="demo-tabs">
+            <button class="demo-tab active" data-endpoint="gst">GST</button>
+            <button class="demo-tab" data-endpoint="pan">PAN</button>
+            <button class="demo-tab" data-endpoint="upi">UPI</button>
+            <button class="demo-tab" data-endpoint="ifsc">IFSC</button>
+            <button class="demo-tab" data-endpoint="cin">CIN</button>
+          </div>
+        </div>
+        <div class="demo-body">
+          <div class="demo-input-group">
+            <label id="demo-label">GSTIN</label>
+            <input type="text" class="demo-input" id="demo-input" value="27AAPFU0939F1ZV" placeholder="Enter identifier..."/>
+          </div>
+          <button class="btn-try" id="demo-btn" onclick="runDemo()">Validate</button>
+        </div>
+      </div>
+      <div class="demo-panel">
+        <div class="demo-panel-header">
+          <h4>Response</h4>
+          <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--emerald)" id="resp-time"></span>
+        </div>
+        <div class="demo-response" id="demo-response">
+          <span class="placeholder">Click "Validate" to see the response...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
+<section class="how-it-works">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">Pre-Validate, Then Verify</h2>
+      <p class="section-sub" style="margin:0 auto 0">
+        Save 15-30% on downstream API costs by filtering malformed inputs first.
+      </p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Send Identifier</h3>
+        <p>POST the GSTIN, PAN, UPI ID, or any supported identifier to our API endpoint.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Instant Validation</h3>
+        <p>We run regex, checksums, and format rules in-memory. No external calls. Under 50ms.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Save Money</h3>
+        <p>Only forward structurally valid identifiers to your paid GSP, NSDL, or NPCI services.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ PRICING ═══════════════════ -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Start Free, Scale as You Grow</h2>
+      <p class="section-sub" style="margin:0 auto 50px">
+        Simple, transparent pricing. No hidden fees. No long-term contracts.
+      </p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h4>Basic</h4>
+        <div class="price">Free<span></span></div>
+        <div class="quota">100 requests / month</div>
+        <ul>
+          <li>All 15 endpoints</li>
+          <li>60 requests/min rate limit</li>
+          <li>JSON responses</li>
+          <li>Community support</li>
+        </ul>
+        <a href="/docs" class="price-btn price-btn-outline">Get Started</a>
+      </div>
+      <div class="price-card featured">
+        <h4>Pro</h4>
+        <div class="price">$9.99<span>/mo</span></div>
+        <div class="quota">5,000 requests / month</div>
+        <ul>
+          <li>Everything in Basic</li>
+          <li>Bulk validation endpoints</li>
+          <li>$0.005/call overage</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="/docs" class="price-btn price-btn-filled">Start Pro Trial</a>
+      </div>
+      <div class="price-card">
+        <h4>Ultra</h4>
+        <div class="price">$29.99<span>/mo</span></div>
+        <div class="quota">25,000 requests / month</div>
+        <ul>
+          <li>Everything in Pro</li>
+          <li>Higher rate limits</li>
+          <li>$0.003/call overage</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a href="/docs" class="price-btn price-btn-outline">Choose Ultra</a>
+      </div>
+      <div class="price-card">
+        <h4>Mega</h4>
+        <div class="price">$99.99<span>/mo</span></div>
+        <div class="quota">100,000 requests / month</div>
+        <ul>
+          <li>Everything in Ultra</li>
+          <li>Highest rate limits</li>
+          <li>$0.002/call overage</li>
+          <li>SLA guarantee</li>
+        </ul>
+        <a href="/docs" class="price-btn price-btn-outline">Choose Mega</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <img src="/static/img/favicon.svg" alt="" style="width:24px;height:24px"/>
+          India PreValidate API
+        </div>
+        <p>Offline format validation for Indian business identifiers. No government database access. No data stored.</p>
+      </div>
+      <div class="footer-col">
+        <h5>API</h5>
+        <a href="/docs">Documentation</a>
+        <a href="/v1/disclaimer">Legal Disclaimer</a>
+        <a href="/v1/health">Health Status</a>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <a href="/docs">Swagger UI</a>
+        <a href="/redoc">ReDoc</a>
+        <a href="/v1/states">State Codes</a>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <a href="/v1/disclaimer">Privacy Notice</a>
+        <a href="/v1/disclaimer">Data Sources</a>
+        <a href="/v1/disclaimer">Compliance</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      India PreValidate API &mdash; MIT License &mdash; All validation is algorithmic and offline.
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+// ── Nav scroll effect ──
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// ── Demo config ──
+const endpoints = {
+  gst:  { label: 'GSTIN', placeholder: '27AAPFU0939F1ZV', url: '/v1/gst/validate', key: 'gstin' },
+  pan:  { label: 'PAN', placeholder: 'ABCPK1234F', url: '/v1/pan/validate', key: 'pan' },
+  upi:  { label: 'UPI ID', placeholder: 'rohit@okaxis', url: '/v1/upi/validate', key: 'upi_id' },
+  ifsc: { label: 'IFSC Code', placeholder: 'SBIN0001234', url: '/v1/ifsc/lookup', key: 'ifsc' },
+  cin:  { label: 'CIN', placeholder: 'U72200MH2007PTC175407', url: '/v1/cin/validate', key: 'cin' }
+};
+let currentEndpoint = 'gst';
+
+// ── Tab switching ──
+document.querySelectorAll('.demo-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentEndpoint = tab.dataset.endpoint;
+    const ep = endpoints[currentEndpoint];
+    document.getElementById('demo-label').textContent = ep.label;
+    document.getElementById('demo-input').value = ep.placeholder;
+    document.getElementById('demo-input').placeholder = ep.placeholder;
+  });
+});
+
+// ── Run demo ──
+async function runDemo() {
+  const btn = document.getElementById('demo-btn');
+  const resp = document.getElementById('demo-response');
+  const input = document.getElementById('demo-input').value.trim();
+  const ep = endpoints[currentEndpoint];
+
+  btn.disabled = true;
+  btn.textContent = 'Validating...';
+  resp.innerHTML = '<span class="placeholder">Sending request...</span>';
+
+  const start = performance.now();
+  try {
+    const body = {};
+    body[ep.key] = input;
+    const r = await fetch(ep.url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await r.json();
+    const ms = Math.round(performance.now() - start);
+    document.getElementById('resp-time').textContent = ms + 'ms';
+    resp.textContent = JSON.stringify(data, null, 2);
+  } catch (e) {
+    resp.innerHTML = '<span style="color:#f87171">Error: ' + e.message + '</span>';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Validate';
+}
+
+// ── Scroll animations ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.endpoint-card, .step-card, .price-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'all 0.5s ease-out';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
