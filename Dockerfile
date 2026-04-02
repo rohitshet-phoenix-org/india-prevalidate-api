@@ -13,11 +13,11 @@ COPY . .
 # (~60s download + build, cached in Docker layer)
 RUN python scripts/build_db.py
 
-# Expose port (Railway injects $PORT at runtime)
-EXPOSE 8000
+# Railway injects $PORT at runtime — do not hardcode
+EXPOSE ${PORT:-8000}
 
-# Run with gunicorn + uvicorn workers for production
-# DPDP Act compliance: --access-logfile /dev/null suppresses access logs
-# that could capture request metadata. Error logs go to stderr only for
-# critical server errors (no request body data is included).
-CMD ["sh", "-c", "gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:${PORT:-8000} --timeout 120 --access-logfile /dev/null --log-level warning"]
+# Run with gunicorn + uvicorn workers
+# - 1 worker to stay within Railway free-tier memory (512 MB)
+# - log-level info so Railway deploy logs show startup/binding
+# - access-logfile /dev/null: DPDP Act compliance (no request logging)
+CMD ["sh", "-c", "exec gunicorn app.main:app -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:${PORT:-8000} --timeout 120 --access-logfile /dev/null --log-level info"]
