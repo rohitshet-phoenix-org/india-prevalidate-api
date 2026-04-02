@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: india-prevalidate-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: RATE_LIMIT_PER_MIN
+        value: 60
+    healthCheckPath: /v1/health
+    plan: starter  # $7/mo — good starting point

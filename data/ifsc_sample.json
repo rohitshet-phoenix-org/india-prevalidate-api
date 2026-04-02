@@ -1,0 +1,107 @@
+{
+    "SBIN0001234": {
+        "branch": "Andheri West",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "address": "Plot No. 8, Andheri West, Mumbai 400058",
+        "micr": "400002034"
+    },
+    "SBIN0000001": {
+        "branch": "Mumbai Main Branch",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "address": "SBI Bhavan, Madam Cama Road, Mumbai 400021",
+        "micr": "400002001"
+    },
+    "HDFC0000001": {
+        "branch": "Fort, Mumbai",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "address": "HDFC Bank House, Senapati Bapat Marg, Lower Parel, Mumbai 400013",
+        "micr": "400240001"
+    },
+    "HDFC0000002": {
+        "branch": "Chandni Chowk",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "1400, Chandni Chowk, Delhi 110006",
+        "micr": "110240002"
+    },
+    "ICIC0000001": {
+        "branch": "ICICI Bank Tower, BKC",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "address": "ICICI Bank Tower, Bandra Kurla Complex, Mumbai 400051",
+        "micr": "400229001"
+    },
+    "UTIB0000001": {
+        "branch": "Axis Bank, Connaught Place",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "7, Tolstoy Marg, Connaught Place, New Delhi 110001",
+        "micr": "110211001"
+    },
+    "KKBK0000001": {
+        "branch": "Kotak Mahindra Bank, Nariman Point",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "address": "27 BKC, C-27, G Block, Bandra Kurla Complex, Mumbai 400051",
+        "micr": "400485001"
+    },
+    "PUNB0001000": {
+        "branch": "PNB Head Office",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "7, Bhikaji Cama Place, New Delhi 110066",
+        "micr": "110024001"
+    },
+    "CNRB0000001": {
+        "branch": "Canara Bank Head Office",
+        "city": "Bengaluru",
+        "state": "Karnataka",
+        "address": "112, J.C. Road, Bengaluru 560002",
+        "micr": "560015001"
+    },
+    "BARB0DBDELH": {
+        "branch": "Bank of Baroda, Delhi Main",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "16, Parliament Street, New Delhi 110001",
+        "micr": "110012001"
+    },
+    "YESB0000001": {
+        "branch": "Yes Bank, Nehru Place",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "9A, Nehru Place, New Delhi 110019",
+        "micr": "110532001"
+    },
+    "FDRL0000001": {
+        "branch": "Federal Bank Head Office",
+        "city": "Aluva",
+        "state": "Kerala",
+        "address": "Federal Towers, Aluva, Kerala 683101",
+        "micr": "683049001"
+    },
+    "SBIN0004567": {
+        "branch": "Connaught Place",
+        "city": "New Delhi",
+        "state": "Delhi",
+        "address": "D-Block, Connaught Place, New Delhi 110001",
+        "micr": "110002045"
+    },
+    "SBIN0007890": {
+        "branch": "MG Road, Bengaluru",
+        "city": "Bengaluru",
+        "state": "Karnataka",
+        "address": "65, MG Road, Bengaluru 560001",
+        "micr": "560002078"
+    },
+    "HDFC0001234": {
+        "branch": "Koramangala",
+        "city": "Bengaluru",
+        "state": "Karnataka",
+        "address": "80 Feet Road, Koramangala, Bengaluru 560034",
+        "micr": "560240012"
+    }
+}
