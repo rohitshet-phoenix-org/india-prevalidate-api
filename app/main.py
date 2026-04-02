@@ -44,6 +44,7 @@ import json
 import time
 import os
 import logging
+import sqlite3
 from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
@@ -202,11 +203,90 @@ async def check_bulk_rate_limit(request: Request):
 # ─── Load Data Files ────────────────────────────────────────────────────────
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+DB_PATH = os.path.join(DATA_DIR, "prevalidate.db")
+
+# Thread-local SQLite connections (SQLite connections are not thread-safe)
+import threading
+_local = threading.local()
+
+
+def _get_db() -> sqlite3.Connection | None:
+    """Get a thread-local read-only SQLite connection, or None if DB missing."""
+    if not os.path.exists(DB_PATH):
+        return None
+    conn = getattr(_local, "db_conn", None)
+    if conn is None:
+        conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA query_only=ON")
+        _local.db_conn = conn
+    return conn
+
+
+def lookup_ifsc(code: str) -> dict | None:
+    """Look up IFSC from SQLite (full dataset), fallback to JSON sample."""
+    conn = _get_db()
+    if conn:
+        row = conn.execute("SELECT * FROM ifsc WHERE code = ?", (code,)).fetchone()
+        if row:
+            return {
+                "branch": row["branch"],
+                "city": row["city"],
+                "state": row["state"],
+                "address": row["address"],
+                "micr": row["micr"],
+                "bank": row["bank"],
+                "district": row["district"],
+                "centre": row["centre"],
+                "imps": bool(row["imps"]),
+                "rtgs": bool(row["rtgs"]),
+                "neft": bool(row["neft"]),
+                "upi": bool(row["upi"]),
+                "swift": row["swift"] or None,
+                "contact": row["contact"] or None,
+            }
+    # Fallback to JSON sample
+    db = _load_ifsc_json()
+    return db.get(code)
+
+
+def lookup_pincode(code: str) -> dict | None:
+    """Look up PIN code from SQLite (full dataset), fallback to JSON sample."""
+    conn = _get_db()
+    if conn:
+        rows = conn.execute(
+            "SELECT * FROM pincode WHERE pincode = ? ORDER BY id LIMIT 10", (code,)
+        ).fetchall()
+        if rows:
+            first = rows[0]
+            offices = [r["office_name"] for r in rows]
+            # Get total count if there are more than 10
+            if len(rows) == 10:
+                total = conn.execute(
+                    "SELECT COUNT(*) FROM pincode WHERE pincode = ?", (code,)
+                ).fetchone()[0]
+            else:
+                total = len(rows)
+            return {
+                "office": first["office_name"],
+                "district": first["district"],
+                "state": first["state"],
+                "region": first["region"],
+                "circle": first["circle"],
+                "delivery": first["delivery"],
+                "division": first["division"],
+                "taluk": first["taluk"],
+                "all_offices": offices if len(offices) > 1 else None,
+                "office_count": total,
+            }
+    # Fallback to JSON sample
+    db = _load_pincode_json()
+    return db.get(code)
 
 
 @lru_cache()
-def load_ifsc_db() -> dict:
-    """Load IFSC → Bank mapping from public-domain RBI dataset."""
+def _load_ifsc_json() -> dict:
+    """Fallback: load IFSC sample JSON if SQLite DB is not available."""
     try:
         with open(os.path.join(DATA_DIR, "ifsc_sample.json"), "r") as f:
             return json.load(f)
@@ -215,8 +295,8 @@ def load_ifsc_db() -> dict:
 
 
 @lru_cache()
-def load_pincode_db() -> dict:
-    """Load PIN code → location mapping from India Post open data (data.gov.in)."""
+def _load_pincode_json() -> dict:
+    """Fallback: load PIN code sample JSON if SQLite DB is not available."""
     try:
         with open(os.path.join(DATA_DIR, "pincode_sample.json"), "r") as f:
             return json.load(f)
@@ -696,7 +776,7 @@ async def validate_upi(body: UPIRequest, _=Depends(check_rate_limit)):
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 @app.post("/v1/ifsc/lookup", response_model=VerifyResponse, tags=["IFSC Lookup (Public Domain)"])
-async def lookup_ifsc(body: IFSCRequest, _=Depends(check_rate_limit)):
+async def ifsc_lookup_endpoint(body: IFSCRequest, _=Depends(check_rate_limit)):
     """
     Look up bank and branch details from an IFSC code.
 
@@ -719,8 +799,7 @@ async def lookup_ifsc(body: IFSCRequest, _=Depends(check_rate_limit)):
     branch_code = ifsc[5:] if len(ifsc) >= 11 else ""
     bank_name = BANK_CODES.get(bank_code, None)
 
-    ifsc_db = load_ifsc_db()
-    branch_info = ifsc_db.get(ifsc, None)
+    branch_info = lookup_ifsc(ifsc)
 
     return VerifyResponse(
         valid=format_valid and bank_name is not None,
@@ -728,14 +807,20 @@ async def lookup_ifsc(body: IFSCRequest, _=Depends(check_rate_limit)):
         details={
             "format_valid": format_valid,
             "bank_code": bank_code,
-            "bank_name": bank_name or "Unknown bank code",
+            "bank_name": branch_info.get("bank", bank_name or "Unknown bank code") if branch_info else (bank_name or "Unknown bank code"),
             "branch_code": branch_code,
-            "branch_name": branch_info.get("branch", "Not in sample dataset — load full RBI dataset for complete coverage") if branch_info else "Not in sample dataset",
+            "branch_name": branch_info.get("branch", "Not found in dataset") if branch_info else "Not found in dataset",
             "city": branch_info.get("city", "—") if branch_info else "—",
+            "district": branch_info.get("district", "—") if branch_info else "—",
             "state": branch_info.get("state", "—") if branch_info else "—",
             "address": branch_info.get("address", "—") if branch_info else "—",
             "micr_code": branch_info.get("micr", "—") if branch_info else "—",
-            "data_source": "RBI published IFSC/MICR registry (public domain)",
+            "imps": branch_info.get("imps", False) if branch_info else False,
+            "rtgs": branch_info.get("rtgs", False) if branch_info else False,
+            "neft": branch_info.get("neft", False) if branch_info else False,
+            "upi": branch_info.get("upi", False) if branch_info else False,
+            "swift": branch_info.get("swift") if branch_info else None,
+            "data_source": "RBI published IFSC/MICR registry — 178,670 branches (public domain)",
             "data_license": "Public domain — no authorization required",
         },
         timestamp=datetime.now(timezone.utc).isoformat(),
@@ -1157,7 +1242,7 @@ async def validate_dl(body: DLRequest, _=Depends(check_rate_limit)):
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 @app.post("/v1/pincode/lookup", response_model=VerifyResponse, tags=["PIN Code Lookup (Public Domain)"])
-async def lookup_pincode(body: PincodeRequest, _=Depends(check_rate_limit)):
+async def pincode_lookup_endpoint(body: PincodeRequest, _=Depends(check_rate_limit)):
     """
     Look up location details from an Indian PIN code.
 
@@ -1178,8 +1263,7 @@ async def lookup_pincode(body: PincodeRequest, _=Depends(check_rate_limit)):
     first_digit = pincode[0] if len(pincode) >= 1 else ""
     region_info = PINCODE_REGIONS.get(first_digit, None)
 
-    pincode_db = load_pincode_db()
-    location = pincode_db.get(pincode, None)
+    location = lookup_pincode(pincode)
 
     return VerifyResponse(
         valid=format_valid,
@@ -1188,12 +1272,15 @@ async def lookup_pincode(body: PincodeRequest, _=Depends(check_rate_limit)):
             "format_valid": format_valid,
             "region": region_info["region"] if region_info else "Unknown",
             "region_states": region_info["states"] if region_info else "Unknown",
-            "office_name": location.get("office", "Not in sample dataset — load full India Post dataset for complete coverage") if location else "Not in sample dataset",
+            "office_name": location.get("office", "Not found in dataset") if location else "Not found in dataset",
             "district": location.get("district", "—") if location else "—",
             "state": location.get("state", "—") if location else "—",
             "circle": location.get("circle", "—") if location else "—",
             "delivery": location.get("delivery", "—") if location else "—",
-            "data_source": "India Post All India Pincode Directory (data.gov.in — public domain)",
+            "division": location.get("division", "—") if location else "—",
+            "taluk": location.get("taluk", "—") if location else "—",
+            "office_count": location.get("office_count", 1) if location else 0,
+            "data_source": "India Post All India Pincode Directory — 154,823 offices, 19,097 PIN codes (data.gov.in — public domain)",
             "data_license": "Government of India Open Data — free for public use",
         },
         timestamp=datetime.now(timezone.utc).isoformat(),

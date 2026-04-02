@@ -8,3 +8,9 @@ dist/
 build/
 .pytest_cache/
 .mypy_cache/
+
+# Large data files (built locally via scripts/build_db.py)
+data/prevalidate.db
+data/IFSC.csv
+data/pincode_full.csv
+data/pincode_raw.json
