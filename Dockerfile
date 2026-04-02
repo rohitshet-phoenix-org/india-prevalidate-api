@@ -20,4 +20,4 @@ EXPOSE 8000
 # DPDP Act compliance: --access-logfile /dev/null suppresses access logs
 # that could capture request metadata. Error logs go to stderr only for
 # critical server errors (no request body data is included).
-CMD gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:${PORT:-8000} --timeout 120 --access-logfile /dev/null --log-level warning
+CMD ["sh", "-c", "gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:${PORT:-8000} --timeout 120 --access-logfile /dev/null --log-level warning"]
