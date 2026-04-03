@@ -506,6 +506,102 @@ footer {
   .pricing-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BULK VALIDATION SECTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+.bulk { padding: 100px 0; }
+.bulk-container {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+}
+.bulk-content { position: relative; }
+.bulk-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 100px; padding: 6px 16px 6px 10px;
+  font-size: 12px; font-weight: 600; color: var(--amber);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px;
+}
+.bulk-badge svg { flex-shrink: 0; }
+.bulk-title {
+  font-size: clamp(28px, 3.5vw, 40px); font-weight: 800;
+  letter-spacing: -1px; line-height: 1.15; margin-bottom: 16px;
+}
+.bulk-title .gradient-amber {
+  background: linear-gradient(135deg, #f59e0b, #fb923c, #f59e0b);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+.bulk-desc {
+  font-size: 16px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 28px;
+}
+.bulk-features { list-style: none; margin-bottom: 32px; }
+.bulk-features li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0; font-size: 15px; color: var(--text-secondary);
+}
+.bulk-features li .feat-icon {
+  flex-shrink: 0; width: 32px; height: 32px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(245, 158, 11, 0.1); margin-top: 1px;
+}
+.bulk-features li strong { color: var(--text-primary); }
+
+.bulk-visual {
+  position: relative; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 40px rgba(245, 158, 11, 0.08);
+}
+.bulk-visual-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 18px;
+  background: rgba(245, 158, 11, 0.05);
+  border-bottom: 1px solid var(--border);
+}
+.bulk-visual-header .code-dot:nth-child(1) { background: #ef4444; }
+.bulk-visual-header .code-dot:nth-child(2) { background: #f59e0b; }
+.bulk-visual-header .code-dot:nth-child(3) { background: #10b981; }
+.bulk-visual-header span {
+  margin-left: auto; font-size: 11px; color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.bulk-visual-body {
+  padding: 24px; font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px; line-height: 1.8;
+}
+.bulk-arrow {
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px 0; color: var(--amber);
+}
+.bulk-arrow svg { animation: bounce-down 2s ease-in-out infinite; }
+@keyframes bounce-down {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+.bulk-result-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 24px 24px;
+}
+.bulk-result-item {
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: rgba(5, 8, 22, 0.6);
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+}
+.bulk-result-item .id-text { color: var(--text-secondary); margin-bottom: 4px; }
+.bulk-result-item .status-valid {
+  color: var(--emerald); font-weight: 600;
+  display: flex; align-items: center; gap: 4px;
+}
+.bulk-result-item .status-invalid {
+  color: #f87171; font-weight: 600;
+  display: flex; align-items: center; gap: 4px;
+}
+
+@media (max-width: 768px) {
+  .bulk-container { grid-template-columns: 1fr; }
+  .bulk-result-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -557,6 +653,13 @@ footer {
       <a href="#demo" class="btn btn-ghost">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polygon points="5,3 13,8 5,13" fill="currentColor"/></svg>
         Try Live Demo
+      </a>
+    </div>
+    <div style="margin-top:16px;text-align:center;animation:fadeUp 0.6s ease-out 0.35s both">
+      <a href="/docs" style="font-size:14px;font-weight:500;color:var(--text-muted);display:inline-flex;align-items:center;gap:6px;transition:color 0.2s">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Explore All API Endpoints
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </div>
 
@@ -664,6 +767,83 @@ footer {
         <span class="endpoint-method method-post">POST</span>
         <div class="endpoint-path">/v1/pan/bulk-validate</div>
         <div class="endpoint-desc">Batch validate up to 50 PANs in a single request</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ BULK VALIDATION ═══════════════════ -->
+<section class="bulk" id="bulk">
+  <div class="container">
+    <div class="bulk-container">
+      <div class="bulk-content">
+        <div class="bulk-badge">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M1 4h14M1 8h14M1 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Bulk Operations
+        </div>
+        <h2 class="bulk-title">
+          Validate <span class="gradient-amber">50 Identifiers</span><br/>in a Single Request
+        </h2>
+        <p class="bulk-desc">
+          Stop looping through individual API calls. Send an entire batch and get
+          detailed validation results for every identifier at once.
+        </p>
+        <ul class="bulk-features">
+          <li>
+            <div class="feat-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 3L6 12L3 8.5" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div><strong>Up to 50 identifiers per call</strong> &mdash; batch GSTIN or PAN numbers in one POST request</div>
+          </li>
+          <li>
+            <div class="feat-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="#f59e0b" stroke-width="1.5"/><path d="M8 5.5V8.5L10 10" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div><strong>50x fewer HTTP round-trips</strong> &mdash; one request instead of fifty, under 200ms total</div>
+          </li>
+          <li>
+            <div class="feat-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 10l4 3 8-9" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div><strong>Per-item results with summary</strong> &mdash; each identifier gets full validation details plus an overall count</div>
+          </li>
+          <li>
+            <div class="feat-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#f59e0b" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+            <div><strong>Available on Pro plans &amp; above</strong> &mdash; <a href="https://rapidapi.com/rohitshetphoenixorg/api/india-prevalidate-api/pricing" target="_blank" style="color:var(--amber)">subscribe on RapidAPI</a> to unlock</div>
+          </li>
+        </ul>
+      </div>
+      <div class="bulk-visual">
+        <div class="bulk-visual-header">
+          <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+          <span>POST /v1/gst/bulk-validate</span>
+        </div>
+        <div class="bulk-visual-body">
+<span class="c-comment">// Send up to 50 GSTINs at once</span>
+{
+  <span class="c-key">"gstins"</span>: [
+    <span class="c-string">"27AAPFU0939F1ZV"</span>,
+    <span class="c-string">"29ABCDE1234F1Z5"</span>,
+    <span class="c-string">"06INVALID0000X"</span>,
+    <span class="c-string">"07AAACR5055K1Z0"</span>
+  ]
+}
+        </div>
+        <div class="bulk-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M5 13l7 7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="bulk-result-grid">
+          <div class="bulk-result-item">
+            <div class="id-text">27AAPFU0939F1ZV</div>
+            <div class="status-valid"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Valid &mdash; Maharashtra</div>
+          </div>
+          <div class="bulk-result-item">
+            <div class="id-text">29ABCDE1234F1Z5</div>
+            <div class="status-valid"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Valid &mdash; Karnataka</div>
+          </div>
+          <div class="bulk-result-item">
+            <div class="id-text">06INVALID0000X</div>
+            <div class="status-invalid"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Invalid format</div>
+          </div>
+          <div class="bulk-result-item">
+            <div class="id-text">07AAACR5055K1Z0</div>
+            <div class="status-valid"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Valid &mdash; Delhi</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -908,7 +1088,7 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 
-document.querySelectorAll('.endpoint-card, .step-card, .price-card').forEach(el => {
+document.querySelectorAll('.endpoint-card, .step-card, .price-card, .bulk-content, .bulk-visual').forEach(el => {
   el.style.opacity = '0';
   el.style.transform = 'translateY(20px)';
   el.style.transition = 'all 0.5s ease-out';
