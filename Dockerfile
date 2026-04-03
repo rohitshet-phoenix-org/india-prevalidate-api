@@ -16,5 +16,4 @@ COPY data/ ./data/
 RUN python scripts/build_db.py
 
 # Railway sets PORT dynamically (typically 8080)
-# Diagnostic echo kept until deploy is confirmed working
-CMD echo "PORT=${PORT:-not_set}" && echo "Health endpoint: /v1/health" && exec python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}
+CMD exec python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}
