@@ -1,0 +1,296 @@
+{
+	"info": {
+		"_postman_id": "india-prevalidate-api-collection",
+		"name": "India PreValidate API",
+		"description": "Offline validation API for Indian financial identifiers — PAN, GST, IFSC, Aadhaar, UPI, Pincode & more. 178K+ IFSC codes, 155K+ pincodes. No government API calls, sub-100ms responses.\n\nLanding Page: https://india-prevalidate-api-production.up.railway.app/\nRapidAPI: https://rapidapi.com/rohitshetphoenixorg/api/india-gst-pan-ifsc-validator-bulk-single\nGitHub: https://github.com/rohitshet-phoenix-org/india-prevalidate-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://india-prevalidate-api-production.up.railway.app",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Validation Endpoints",
+			"item": [
+				{
+					"name": "Validate GST Number",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"22AAAAA0000A1Z5\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/gst/validate", "host": ["{{baseUrl}}"], "path": ["v1", "gst", "validate"]},
+						"description": "Validate GSTIN format and checksum. Extracts state code, entity type, PAN component."
+					}
+				},
+				{
+					"name": "Validate PAN Number",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"ABCDE1234F\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/pan/validate", "host": ["{{baseUrl}}"], "path": ["v1", "pan", "validate"]},
+						"description": "Validate PAN format. Extracts holder type (Individual, Company, etc.) from the 4th character."
+					}
+				},
+				{
+					"name": "Validate UPI/VPA",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"user@paytm\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/upi/validate", "host": ["{{baseUrl}}"], "path": ["v1", "upi", "validate"]},
+						"description": "Validate UPI Virtual Payment Address format. Detects provider/bank from handle."
+					}
+				},
+				{
+					"name": "Lookup IFSC Code",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"SBIN0001234\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/ifsc/lookup", "host": ["{{baseUrl}}"], "path": ["v1", "ifsc", "lookup"]},
+						"description": "Validate and lookup IFSC code against 178,000+ codes from RBI open data. Returns bank name, branch, city, state, address."
+					}
+				},
+				{
+					"name": "Validate CIN",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"U12345MH2020PTC123456\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/cin/validate", "host": ["{{baseUrl}}"], "path": ["v1", "cin", "validate"]},
+						"description": "Validate Company Identification Number (CIN) format. Extracts listing status, industry code, state, incorporation year, company type."
+					}
+				},
+				{
+					"name": "Validate DIN",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"00012345\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/din/validate", "host": ["{{baseUrl}}"], "path": ["v1", "din", "validate"]},
+						"description": "Validate Director Identification Number (DIN) format."
+					}
+				},
+				{
+					"name": "Validate TAN",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"MUMA12345B\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/tan/validate", "host": ["{{baseUrl}}"], "path": ["v1", "tan", "validate"]},
+						"description": "Validate Tax Deduction/Collection Account Number (TAN) format."
+					}
+				},
+				{
+					"name": "Validate IEC",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"0300012345\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/iec/validate", "host": ["{{baseUrl}}"], "path": ["v1", "iec", "validate"]},
+						"description": "Validate Import Export Code (IEC) format."
+					}
+				},
+				{
+					"name": "Validate FSSAI License",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"10012345000123\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/fssai/format", "host": ["{{baseUrl}}"], "path": ["v1", "fssai", "format"]},
+						"description": "Validate FSSAI Food License number format."
+					}
+				},
+				{
+					"name": "Validate MSME/Udyam",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"UDYAM-MH-01-0012345\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/msme/format", "host": ["{{baseUrl}}"], "path": ["v1", "msme", "format"]},
+						"description": "Validate MSME Udyam Registration Number format."
+					}
+				},
+				{
+					"name": "Validate Vehicle Registration",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"MH01AB1234\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/vehicle/format", "host": ["{{baseUrl}}"], "path": ["v1", "vehicle", "format"]},
+						"description": "Validate Indian vehicle registration number format. Extracts state and RTO district."
+					}
+				},
+				{
+					"name": "Validate Driving License",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"MH0120200012345\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/driving-license/format", "host": ["{{baseUrl}}"], "path": ["v1", "driving-license", "format"]},
+						"description": "Validate Indian Driving License number format."
+					}
+				},
+				{
+					"name": "Lookup Pincode",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifier\": \"400001\"\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/pincode/lookup", "host": ["{{baseUrl}}"], "path": ["v1", "pincode", "lookup"]},
+						"description": "Validate and lookup Indian PIN code against 155,000+ post offices from data.gov.in. Returns office name, district, state, region."
+					}
+				}
+			]
+		},
+		{
+			"name": "Bulk Validation",
+			"item": [
+				{
+					"name": "Bulk Validate GST Numbers",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifiers\": [\n    \"22AAAAA0000A1Z5\",\n    \"29BBBBB1111B2Y4\",\n    \"INVALID_GST\"\n  ]\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/gst/bulk-validate", "host": ["{{baseUrl}}"], "path": ["v1", "gst", "bulk-validate"]},
+						"description": "Bulk validate multiple GSTIN numbers in a single request. Pro plan and above."
+					}
+				},
+				{
+					"name": "Bulk Validate PAN Numbers",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"identifiers\": [\n    \"ABCDE1234F\",\n    \"ZZZZZ9999Z\",\n    \"INVALID\"\n  ]\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/v1/pan/bulk-validate", "host": ["{{baseUrl}}"], "path": ["v1", "pan", "bulk-validate"]},
+						"description": "Bulk validate multiple PAN numbers in a single request. Pro plan and above."
+					}
+				}
+			]
+		},
+		{
+			"name": "Reference Data",
+			"item": [
+				{
+					"name": "List Indian States",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/v1/states", "host": ["{{baseUrl}}"], "path": ["v1", "states"]},
+						"description": "Returns all Indian state codes and names used in GST, Vehicle Registration, etc."
+					}
+				},
+				{
+					"name": "List Banks",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/v1/banks", "host": ["{{baseUrl}}"], "path": ["v1", "banks"]},
+						"description": "Returns all bank names and IFSC prefixes from the database."
+					}
+				},
+				{
+					"name": "List UPI Providers",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/v1/upi-providers", "host": ["{{baseUrl}}"], "path": ["v1", "upi-providers"]},
+						"description": "Returns all known UPI handle suffixes and their associated banks/providers."
+					}
+				},
+				{
+					"name": "List RTO Codes",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/v1/rto-codes", "host": ["{{baseUrl}}"], "path": ["v1", "rto-codes"]},
+						"description": "Returns all known RTO codes and their districts/states for vehicle registration validation."
+					}
+				},
+				{
+					"name": "List Pincode States",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/v1/pincode/states", "host": ["{{baseUrl}}"], "path": ["v1", "pincode", "states"]},
+						"description": "Returns all states/UTs with pincode coverage and post office counts."
+					}
+				}
+			]
+		},
+		{
+			"name": "Utility",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/v1/health", "host": ["{{baseUrl}}"], "path": ["v1", "health"]},
+						"description": "Returns API health status, uptime, database status, and version."
+					}
+				},
+				{
+					"name": "Disclaimer",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/v1/disclaimer", "host": ["{{baseUrl}}"], "path": ["v1", "disclaimer"]},
+						"description": "Returns legal disclaimer, privacy notice, and data source information."
+					}
+				},
+				{
+					"name": "Aggregate Stats",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{baseUrl}}/v1/stats", "host": ["{{baseUrl}}"], "path": ["v1", "stats"]},
+						"description": "Returns aggregate API usage statistics (no personal data — DPDP compliant)."
+					}
+				}
+			]
+		}
+	]
+}
