@@ -2,16 +2,34 @@
 	"info": {
 		"_postman_id": "india-prevalidate-api-collection",
 		"name": "India PreValidate API",
-		"description": "Offline validation API for Indian financial identifiers — PAN, GST, IFSC, Aadhaar, UPI, Pincode & more. 178K+ IFSC codes, 155K+ pincodes. No government API calls, sub-100ms responses.\n\nLanding Page: https://india-prevalidate-api-production.up.railway.app/\nRapidAPI: https://rapidapi.com/rohitshetphoenixorg/api/india-gst-pan-ifsc-validator-bulk-single\nGitHub: https://github.com/rohitshet-phoenix-org/india-prevalidate-api",
+		"description": "Offline validation API for Indian financial identifiers — PAN, GST, IFSC, Aadhaar, UPI, Pincode & more. 178K+ IFSC codes, 155K+ pincodes. No government API calls, sub-100ms responses.\n\n**Authentication:** All requests require a RapidAPI API key. Get yours free at:\nhttps://rapidapi.com/rohitshetphoenixorg/api/india-gst-pan-ifsc-validator-bulk-single\n\nLanding Page: https://india-prevalidate-api-production.up.railway.app/\nGitHub: https://github.com/rohitshet-phoenix-org/india-prevalidate-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "https://india-prevalidate-api-production.up.railway.app",
+			"value": "https://india-gst-pan-ifsc-validator-bulk-single.p.rapidapi.com",
+			"type": "string"
+		},
+		{
+			"key": "rapidApiKey",
+			"value": "YOUR_RAPIDAPI_KEY_HERE",
+			"type": "string"
+		},
+		{
+			"key": "rapidApiHost",
+			"value": "india-gst-pan-ifsc-validator-bulk-single.p.rapidapi.com",
 			"type": "string"
 		}
 	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{"key": "key", "value": "X-RapidAPI-Key", "type": "string"},
+			{"key": "value", "value": "{{rapidApiKey}}", "type": "string"},
+			{"key": "in", "value": "header", "type": "string"}
+		]
+	},
 	"item": [
 		{
 			"name": "Validation Endpoints",
@@ -20,7 +38,11 @@
 					"name": "Validate GST Number",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"22AAAAA0000A1Z5\"\n}"
@@ -33,7 +55,11 @@
 					"name": "Validate PAN Number",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"ABCDE1234F\"\n}"
@@ -46,7 +72,11 @@
 					"name": "Validate UPI/VPA",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"user@paytm\"\n}"
@@ -59,7 +89,11 @@
 					"name": "Lookup IFSC Code",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"SBIN0001234\"\n}"
@@ -72,7 +106,11 @@
 					"name": "Validate CIN",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"U12345MH2020PTC123456\"\n}"
@@ -85,7 +123,11 @@
 					"name": "Validate DIN",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"00012345\"\n}"
@@ -98,7 +140,11 @@
 					"name": "Validate TAN",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"MUMA12345B\"\n}"
@@ -111,7 +157,11 @@
 					"name": "Validate IEC",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"0300012345\"\n}"
@@ -124,7 +174,11 @@
 					"name": "Validate FSSAI License",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"10012345000123\"\n}"
@@ -137,7 +191,11 @@
 					"name": "Validate MSME/Udyam",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"UDYAM-MH-01-0012345\"\n}"
@@ -150,7 +208,11 @@
 					"name": "Validate Vehicle Registration",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"MH01AB1234\"\n}"
@@ -163,7 +225,11 @@
 					"name": "Validate Driving License",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"MH0120200012345\"\n}"
@@ -176,7 +242,11 @@
 					"name": "Lookup Pincode",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifier\": \"400001\"\n}"
@@ -188,32 +258,40 @@
 			]
 		},
 		{
-			"name": "Bulk Validation",
+			"name": "Bulk Validation (Pro Plan)",
 			"item": [
 				{
 					"name": "Bulk Validate GST Numbers",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifiers\": [\n    \"22AAAAA0000A1Z5\",\n    \"29BBBBB1111B2Y4\",\n    \"INVALID_GST\"\n  ]\n}"
 						},
 						"url": {"raw": "{{baseUrl}}/v1/gst/bulk-validate", "host": ["{{baseUrl}}"], "path": ["v1", "gst", "bulk-validate"]},
-						"description": "Bulk validate multiple GSTIN numbers in a single request. Pro plan and above."
+						"description": "Bulk validate multiple GSTIN numbers in a single request. Requires Pro plan or above on RapidAPI."
 					}
 				},
 				{
 					"name": "Bulk Validate PAN Numbers",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{"key": "Content-Type", "value": "application/json"},
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"identifiers\": [\n    \"ABCDE1234F\",\n    \"ZZZZZ9999Z\",\n    \"INVALID\"\n  ]\n}"
 						},
 						"url": {"raw": "{{baseUrl}}/v1/pan/bulk-validate", "host": ["{{baseUrl}}"], "path": ["v1", "pan", "bulk-validate"]},
-						"description": "Bulk validate multiple PAN numbers in a single request. Pro plan and above."
+						"description": "Bulk validate multiple PAN numbers in a single request. Requires Pro plan or above on RapidAPI."
 					}
 				}
 			]
@@ -225,6 +303,10 @@
 					"name": "List Indian States",
 					"request": {
 						"method": "GET",
+						"header": [
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"url": {"raw": "{{baseUrl}}/v1/states", "host": ["{{baseUrl}}"], "path": ["v1", "states"]},
 						"description": "Returns all Indian state codes and names used in GST, Vehicle Registration, etc."
 					}
@@ -233,6 +315,10 @@
 					"name": "List Banks",
 					"request": {
 						"method": "GET",
+						"header": [
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"url": {"raw": "{{baseUrl}}/v1/banks", "host": ["{{baseUrl}}"], "path": ["v1", "banks"]},
 						"description": "Returns all bank names and IFSC prefixes from the database."
 					}
@@ -241,6 +327,10 @@
 					"name": "List UPI Providers",
 					"request": {
 						"method": "GET",
+						"header": [
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"url": {"raw": "{{baseUrl}}/v1/upi-providers", "host": ["{{baseUrl}}"], "path": ["v1", "upi-providers"]},
 						"description": "Returns all known UPI handle suffixes and their associated banks/providers."
 					}
@@ -249,6 +339,10 @@
 					"name": "List RTO Codes",
 					"request": {
 						"method": "GET",
+						"header": [
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"url": {"raw": "{{baseUrl}}/v1/rto-codes", "host": ["{{baseUrl}}"], "path": ["v1", "rto-codes"]},
 						"description": "Returns all known RTO codes and their districts/states for vehicle registration validation."
 					}
@@ -257,6 +351,10 @@
 					"name": "List Pincode States",
 					"request": {
 						"method": "GET",
+						"header": [
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"url": {"raw": "{{baseUrl}}/v1/pincode/states", "host": ["{{baseUrl}}"], "path": ["v1", "pincode", "states"]},
 						"description": "Returns all states/UTs with pincode coverage and post office counts."
 					}
@@ -270,6 +368,10 @@
 					"name": "Health Check",
 					"request": {
 						"method": "GET",
+						"header": [
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"url": {"raw": "{{baseUrl}}/v1/health", "host": ["{{baseUrl}}"], "path": ["v1", "health"]},
 						"description": "Returns API health status, uptime, database status, and version."
 					}
@@ -278,6 +380,10 @@
 					"name": "Disclaimer",
 					"request": {
 						"method": "GET",
+						"header": [
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"url": {"raw": "{{baseUrl}}/v1/disclaimer", "host": ["{{baseUrl}}"], "path": ["v1", "disclaimer"]},
 						"description": "Returns legal disclaimer, privacy notice, and data source information."
 					}
@@ -286,6 +392,10 @@
 					"name": "Aggregate Stats",
 					"request": {
 						"method": "GET",
+						"header": [
+							{"key": "X-RapidAPI-Key", "value": "{{rapidApiKey}}"},
+							{"key": "X-RapidAPI-Host", "value": "{{rapidApiHost}}"}
+						],
 						"url": {"raw": "{{baseUrl}}/v1/stats", "host": ["{{baseUrl}}"], "path": ["v1", "stats"]},
 						"description": "Returns aggregate API usage statistics (no personal data — DPDP compliant)."
 					}
