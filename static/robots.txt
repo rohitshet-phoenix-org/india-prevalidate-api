@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /v1/
+Disallow: /redoc
+
+Sitemap: https://india-prevalidate-api-production.up.railway.app/sitemap.xml

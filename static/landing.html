@@ -1,11 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>India PreValidate API — Offline Format Validation for Indian Business Identifiers</title>
-<meta name="description" content="Pre-validate GSTIN, PAN, UPI, IFSC, CIN, TAN and 9 more Indian identifier formats offline. No government database access. DPDP Act compliant."/>
+<title>India PreValidate API — Offline PAN, GST, IFSC, Aadhaar, UPI Validation API</title>
+<meta name="description" content="Free offline validation API for Indian financial identifiers. Validate PAN, GSTIN, IFSC codes, Aadhaar, UPI/VPA, Pincode, Vehicle Registration, Passport &amp; Voter ID instantly — no third-party calls, bulk-capable. 178K+ IFSC codes, 155K+ pincodes."/>
+<meta name="keywords" content="PAN validation API, GST validation API, IFSC lookup API, Aadhaar validation, UPI VPA validation, India fintech API, offline validation API, Indian financial identifier validation, pincode lookup API, vehicle registration validation API, India KYC API, bulk validation API India"/>
+<meta name="author" content="India PreValidate API"/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://india-prevalidate-api-production.up.railway.app/"/>
+
+<!-- Geo tags (India-focused) -->
+<meta name="geo.region" content="IN"/>
+<meta name="geo.placename" content="India"/>
+<link rel="alternate" hreflang="en-in" href="https://india-prevalidate-api-production.up.railway.app/"/>
+<link rel="alternate" hreflang="x-default" href="https://india-prevalidate-api-production.up.railway.app/"/>
+
+<!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="India PreValidate API — Offline PAN, GST, IFSC, Aadhaar Validation"/>
+<meta property="og:description" content="Validate Indian PAN, GSTIN, IFSC, Aadhaar, UPI IDs, and Pincodes instantly — offline, bulk-capable, zero external dependencies. 178K+ IFSC codes, 155K+ pincodes."/>
+<meta property="og:url" content="https://india-prevalidate-api-production.up.railway.app/"/>
+<meta property="og:site_name" content="India PreValidate API"/>
+<meta property="og:image" content="https://india-prevalidate-api-production.up.railway.app/static/img/og-image.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:locale" content="en_IN"/>
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="India PreValidate API — Offline Validation for PAN, GST, IFSC, Aadhaar"/>
+<meta name="twitter:description" content="Instant offline validation for 10+ Indian financial identifiers. Built for developers building fintech apps. Free tier available."/>
+<meta name="twitter:image" content="https://india-prevalidate-api-production.up.railway.app/static/img/og-image.png"/>
+
 <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -603,6 +633,92 @@ footer {
   .bulk-result-grid { grid-template-columns: 1fr; }
 }
 </style>
+<!-- Structured Data: WebApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "India PreValidate API",
+  "url": "https://india-prevalidate-api-production.up.railway.app/",
+  "description": "Offline validation API for Indian financial identifiers including PAN, GST, IFSC, Aadhaar, UPI/VPA, Pincode, Vehicle Registration, Passport, and Voter ID. 178,000+ IFSC codes, 155,000+ pincodes.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "description": "Free tier available on RapidAPI"
+  },
+  "featureList": [
+    "PAN number validation",
+    "GST number (GSTIN) validation with checksum",
+    "IFSC code lookup with 178,000+ codes",
+    "Aadhaar number validation (Verhoeff algorithm)",
+    "UPI/VPA ID validation",
+    "Pincode lookup with 155,000+ post offices",
+    "Vehicle registration number validation",
+    "Passport number validation",
+    "Voter ID (EPIC) validation",
+    "CIN/LLPIN validation",
+    "TAN validation",
+    "Bulk validation endpoints"
+  ],
+  "creator": {
+    "@type": "Organization",
+    "name": "India PreValidate API"
+  }
+}
+</script>
+
+<!-- Structured Data: FAQPage (for rich snippets) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does India PreValidate API validate PAN numbers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The API validates PAN numbers offline using regex pattern matching, structure verification, and category code validation against the format defined by the Indian Income Tax Department. No external API calls are made — all processing is instant and in-memory."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the IFSC code database up to date?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The API includes 178,000+ IFSC codes sourced from RBI's publicly published registry (Razorpay open-source dataset, MIT licensed). The database is regularly updated to include new bank branches and mergers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this API store or transmit Aadhaar numbers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. All validation is performed offline using mathematical verification (Verhoeff checksum algorithm). No data is stored, logged, or transmitted to third parties. The API is fully DPDP Act 2023 compliant."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this API for free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The API offers a free Basic tier on RapidAPI with no credit card required. Single-record validation endpoints are available on the free plan. Bulk validation endpoints are available on Pro and higher plans."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What makes this different from other Indian validation APIs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "India PreValidate API works entirely offline — it never calls government servers (GSTN, NSDL, NPCI, RBI). This means sub-100ms response times, 99.9%+ uptime regardless of government portal availability, and zero per-call costs to third-party services. It validates format and structure, not registration status."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 

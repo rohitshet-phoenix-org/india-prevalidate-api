@@ -35,7 +35,7 @@ LEGAL SCOPE — What this API does NOT do:
 
 from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import Optional
@@ -101,6 +101,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# GZip compression — reduces response sizes for landing page, JSON, docs
+from starlette.middleware.gzip import GZipMiddleware
+app.add_middleware(GZipMiddleware, minimum_size=500)
+
 # ─── Static Files & Custom UI ───────────────────────────────────────────────
 
 _APP_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -113,7 +117,21 @@ async def landing_page():
     """Serve the landing page at root."""
     html_path = os.path.join(STATIC_DIR, "landing.html")
     with open(html_path, "r", encoding="utf-8") as f:
-        return HTMLResponse(content=f.read())
+        response = HTMLResponse(content=f.read())
+        response.headers["Cache-Control"] = "public, max-age=3600"
+        return response
+
+
+@app.get("/robots.txt", include_in_schema=False)
+async def robots_txt():
+    """Serve robots.txt for search engine crawlers."""
+    return FileResponse(os.path.join(STATIC_DIR, "robots.txt"), media_type="text/plain")
+
+
+@app.get("/sitemap.xml", include_in_schema=False)
+async def sitemap_xml():
+    """Serve sitemap.xml for search engine indexing."""
+    return FileResponse(os.path.join(STATIC_DIR, "sitemap.xml"), media_type="application/xml")
 
 
 @app.get("/docs", include_in_schema=False)
