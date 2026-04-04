@@ -772,13 +772,29 @@ footer {
         Try Live Demo
       </a>
     </div>
-    <div style="margin-top:16px;text-align:center;animation:fadeUp 0.6s ease-out 0.35s both">
+    <div style="margin-top:16px;text-align:center;animation:fadeUp 0.6s ease-out 0.35s both;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap">
       <a href="/docs" style="font-size:14px;font-weight:500;color:var(--text-muted);display:inline-flex;align-items:center;gap:6px;transition:color 0.2s">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         Explore All API Endpoints
         <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
+      <div class="postman-run-button"
+        data-postman-action="collection/fork"
+        data-postman-visibility="public"
+        data-postman-var-1="53754735-73bdb14f-4683-4b5b-a029-b6c2f5cdbda3"
+        data-postman-collection-url="entityId=53754735-73bdb14f-4683-4b5b-a029-b6c2f5cdbda3&entityType=collection&workspaceId=ebb3c4f5-9bc6-4769-89e9-ea3b023963b9"></div>
     </div>
+
+    <!-- Postman Run Button Script -->
+    <script type="text/javascript">
+      (function (p,o,s,t,m,a,n) {
+        !p[s] && (p[s] = function () { (p[t] || (p[t] = [])).push(arguments); });
+        !o.getElementById(s+t) && o.getElementsByTagName("head")[0].appendChild((
+          (n = o.createElement("script")),
+          (n.id = s+t), (n.async = 1), (n.src = m), n
+        ));
+      }(window, document, "_pm", "PostmanRunObject", "https://run.pstmn.io/button.js"));
+    </script>
 
     <!-- Hero code preview -->
     <div class="hero-code">
